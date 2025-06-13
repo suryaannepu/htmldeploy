@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Information Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #7C3AED;       /* Deep purple */
+            --primary-light: #8B5CF6;  /* Lighter purple */
+            --primary-dark: #5B21B6;   /* Dark purple */
+            --secondary: #EC4899;      /* Pink */
+            --accent: #10B981;         /* Emerald */
+            --warning: #EF4444;        /* Red */
+            --text: #1F2937;          /* Dark gray */
+            --text-light: #6B7280;     /* Medium gray */
+            --bg: #F9FAFB;            /* Light gray bg */
+            --card-bg: white;
+            --border: #E5E7EB;         /* Light border */
+            --shadow-light: rgba(0,0,0,0.05);
+            --shadow-medium: rgba(0,0,0,0.1);
+            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        h1 {
+            margin: 40px 0 20px;
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+
+        .container {
+            background: var(--card-bg);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px var(--shadow-medium);
+            width: 90%;
+            max-width: 900px;
+            margin: 20px 0 60px;
+            animation: fadeIn 0.8s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            transition: var(--transition);
+            font-weight: 500;
+            color: var(--text);
+            background-color: rgba(249, 250, 251, 0.8);
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 5px rgba(124, 58, 237, 0.15);
+        }
+
+        button {
+            background-image: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+            padding: 0 2.5rem;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 6px 12px var(--shadow-light);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background-image: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px var(--shadow-medium);
+        }
+
+        button:disabled {
+            background: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 40px 0;
+            color: var(--text);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .spinner {
+            border: 5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 5px solid var(--primary);
+            width: 50px;
+            height: 50px;
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: var(--warning);
+            background: rgba(239, 68, 68, 0.1);
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin: 25px 0;
+            text-align: center;
+            display: none;
+            font-weight: 600;
+            border-left: 4px solid var(--warning);
+            opacity: 0;
+            animation: fadeIn 0.4s ease-out forwards;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .result {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .result-section {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.08);
+            border: 1px solid rgba(124, 58, 237, 0.1);
+            opacity: 0;
+            animation: slideInUp 0.6s ease-out forwards;
+            transition: var(--transition);
+        }
+
+        .result-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.12);
+        }
+
+        .result-section:nth-child(1) { 
+            animation-delay: 0.1s;
+            border-top: 3px solid var(--primary);
+        }
+        .result-section:nth-child(2) { 
+            animation-delay: 0.2s;
+            border-top: 3px solid var(--accent);
+        }
+        .result-section:nth-child(3) { 
+            animation-delay: 0.3s;
+            border-top: 3px solid var(--secondary);
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-section h3 {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: -0.2px;
+        }
+
+        .result-section:nth-child(1) h3 { color: var(--primary); }
+        .result-section:nth-child(2) h3 { color: var(--accent); }
+        .result-section:nth-child(3) h3 { color: var(--secondary); }
+
+        .result-section h3 i {
+            font-size: 1.4rem;
+            width: 40px;
+            height: 40px;
+            background: rgba(124, 58, 237, 0.1);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .point-list {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .point-list li {
+            margin-bottom: 1.2rem;
+            position: relative;
+            line-height: 1.7;
+            padding-left: 2.5rem;
+            font-size: 1.05rem;
+        }
+
+        .point-list li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0.5rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .result-section:nth-child(1) .point-list li::before { background-color: var(--primary); }
+        .result-section:nth-child(2) .point-list li::before { background-color: var(--accent); }
+        .result-section:nth-child(3) .point-list li::before { background-color: var(--secondary); }
+
+        .point-list li strong {
+            font-weight: 700;
+            background: rgba(124, 58, 237, 0.1);
+            padding: 0.1rem 0.3rem;
+            border-radius: 4px;
+        }
+
+        .point-list li em {
+            font-style: italic;
+            color: var(--text-light);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tag.warning {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--warning);
+        }
+
+        .tag.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+        }
+
+        footer {
+            margin-top: auto;
+            padding: 2.5rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            text-align: center;
+            width: 100%;
+            border-top: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        footer p:first-child {
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.8rem;
+                border-radius: 16px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+                margin: 30px 0 15px;
+            }
+            
+            .input-group {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            button {
+                padding: 1rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .result-section {
+                padding: 1.5rem;
+            }
+
+            .result-section h3 {
+                font-size: 1.4rem;
+            }
+
+            .point-list li {
+                padding-left: 2rem;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <h1>Disease Information Finder</h1>
+        <div class="container">
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="diseaseInput" 
+                    placeholder="Enter disease name (e.g., diabetes, hypertension)..." 
+                    aria-label="Disease name"
+                />
+                <button id="searchBtn">
+                    <i class="fas fa-search"></i>
+                    Get Info
+                </button>
+            </div>
+
+            <div class="error" id="errorBox">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorMessage"></span>
+            </div>
+
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Analyzing medical data with AI...</p>
+            </div>
+
+            <div class="result" id="resultBox">
+                <section class="result-section">
+                    <h3><i class="fas fa-pills"></i>Medication Plan</h3>
+                    <ul class="point-list" id="medication"></ul>
+                </section>
+
+                <section class="result-section">
+                    <h3><i class="fas fa-utensils"></i>Nutritional Guidance</h3>
+                    <ul class="point-list" id="food"></ul>
+                </section>
+
+                <section class="result-section">
+                    <h3><i class="fas fa-shield-alt"></i>Prevention Strategy</h3>
+                    <ul class="point-list" id="precautions"></ul>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Powered by AI | For educational purposes only</p>
+        <p><strong>Consult a healthcare professional for medical advice</strong></p>
+    </footer>
+
+    <script>
+        const diseaseInput = document.getElementById("diseaseInput");
+        const searchBtn = document.getElementById("searchBtn");
+        const errorBox = document.getElementById("errorBox");
+        const errorMessage = document.getElementById("errorMessage");
+        const loadingIndicator = document.getElementById("loadingIndicator");
+        const resultBox = document.getElementById("resultBox");
+
+        // Initialize with error hidden
+        errorBox.style.display = "none";
+
+        // Handle search button click
+        searchBtn.addEventListener("click", getDiseaseInfo);
+
+        // Handle Enter key press
+        diseaseInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                getDiseaseInfo();
+            }
+        });
+
+        async function getDiseaseInfo() {
+            const disease = diseaseInput.value.trim();
+            
+            // Validate input
+            if (!disease) {
+                showError("Please enter a disease name");
+                return;
+            }
+            if (disease.length < 3) {
+                showError("Enter at least 3 characters");
+                return;
+            }
+
+            // Clear previous results and errors
+            hideError();
+            resultBox.style.display = "none";
+            
+            // Show loading state
+            loadingIndicator.style.display = "block";
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                // Reset all result sections for animation
+                document.querySelectorAll('.result-section').forEach(section => {
+                    section.style.opacity = '0';
+                    section.style.transform = 'translateY(30px)';
+                });
+
+                // API call
+                const response = await fetch("https://gemini-ipfu.onrender.com/disease-info", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ disease }),
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || "Failed to retrieve information");
+                }
+
+                const data = await response.json();
+
+                // Process and display results
+                displayResults(data);
+                
+                resultBox.style.display = "block";
+            } catch (error) {
+                console.error("Error:", error);
+                showError(error.message || "Something went wrong. Please try again.");
+            } finally {
+                loadingIndicator.style.display = "none";
+                searchBtn.disabled = false;
+                searchBtn.innerHTML = '<i class="fas fa-search"></i> Get Info';
+            }
+        }
+
+        function displayResults(data) {
+            // Process medication
+            const medList = document.getElementById("medication");
+            medList.innerHTML = formatBackendData(data.medication || "No medication information available.");
+            
+            // Process food
+            const foodList = document.getElementById("food");
+            foodList.innerHTML = formatBackendData(data.food || "No nutritional guidance available.");
+            
+            // Process precautions
+            const precautionsList = document.getElementById("precautions");
+            precautionsList.innerHTML = formatBackendData(data.precautions || "No prevention strategies available.");
+        }
+
+        function formatBackendData(text) {
+            if (!text || text.trim() === '') {
+                return '<li><em>No information available</em></li>';
+            }
+            
+            // Split by lines and remove empty lines
+            const lines = text.split('\n').filter(line => line.trim());
+            
+            return lines.map(line => {
+                // Clean the line from markdown symbols and extra spaces
+                let cleanLine = line.replace(/^[•\-\*]\s*/, '').trim();
+                
+                // Format important phrases with strong tags
+                cleanLine = cleanLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Format italic phrases
+                cleanLine = cleanLine.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // Add tags for important categories
+                cleanLine = cleanLine.replace(/\[(warning|important)\]/g, '<span class="tag warning">$1</span>');
+                cleanLine = cleanLine.replace(/\[(recommended|beneficial)\]/g, '<span class="tag success">$1</span>');
+                cleanLine = cleanLine.replace(/\[(.*?)\]/g, '<span class="tag">$1</span>');
+                
+                return `<li>${cleanLine}</li>`;
+            }).join('');
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorBox.style.display = "flex";
+            errorBox.style.opacity = '0';
+            errorBox.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                errorBox.style.opacity = '1';
+                errorBox.style.transform = 'translateY(0)';
+            }, 10);
+        }
+
+        function hideError() {
+            errorBox.style.display = "none";
+        }
+    </script>
+</body>
+</html>
