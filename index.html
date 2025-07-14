@@ -3,75 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disease Information Finder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>MediSearch - AI-Powered Disease Information</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #7C3AED;       /* Deep purple */
-            --primary-light: #8B5CF6;  /* Lighter purple */
-            --primary-dark: #5B21B6;   /* Dark purple */
-            --secondary: #EC4899;      /* Pink */
-            --accent: #10B981;         /* Emerald */
-            --warning: #EF4444;        /* Red */
-            --text: #1F2937;          /* Dark gray */
-            --text-light: #6B7280;     /* Medium gray */
-            --bg: #F9FAFB;            /* Light gray bg */
-            --card-bg: white;
-            --border: #E5E7EB;         /* Light border */
-            --shadow-light: rgba(0,0,0,0.05);
-            --shadow-medium: rgba(0,0,0,0.1);
-            --transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            --primary: #2563EB;           /* Professional blue */
+            --primary-light: #3B82F6;     /* Lighter blue */
+            --primary-dark: #1D4ED8;      /* Dark blue */
+            --secondary: #7C3AED;         /* Purple accent */
+            --accent: #059669;            /* Success green */
+            --warning: #DC2626;           /* Error red */
+            --text: #111827;              /* Almost black */
+            --text-light: #6B7280;        /* Medium gray */
+            --text-muted: #9CA3AF;        /* Light gray */
+            --bg: #F8FAFC;               /* Very light blue-gray */
+            --card-bg: #FFFFFF;
+            --border: #E2E8F0;            /* Light border */
+            --border-light: #F1F5F9;     /* Very light border */
+            --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        * {
+            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: var(--bg);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
             margin: 0;
             padding: 0;
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+            font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+            overflow-x: hidden;
+        }
+
+        /* Background decoration */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 25% 25%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                        radial-gradient(circle at 75% 75%, rgba(124, 58, 237, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .main-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            color: var(--text);
-            line-height: 1.6;
+            padding: 2rem 1rem;
+            position: relative;
         }
 
-        h1 {
-            margin: 40px 0 20px;
+        /* Header section */
+        .header {
             text-align: center;
-            font-size: 2.8rem;
+            margin-bottom: 3rem;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--card-bg);
+            border-radius: 50px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-light);
+            transition: var(--transition);
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
             font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
-            position: relative;
+            letter-spacing: -0.5px;
         }
 
-        h1::after {
-            content: '';
-            display: block;
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            margin: 10px auto 0;
-            border-radius: 2px;
+        h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
         }
 
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            font-weight: 500;
+            margin: 0;
+            max-width: 600px;
+        }
+
+        /* Main card */
         .container {
             background: var(--card-bg);
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 15px 40px var(--shadow-medium);
-            width: 90%;
-            max-width: 900px;
-            margin: 20px 0 60px;
-            animation: fadeIn 0.8s ease-out forwards;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 3rem;
+            animation: slideUp 0.8s ease-out 0.2s both;
             position: relative;
-            overflow: hidden;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .container::before {
@@ -79,209 +173,395 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 5px;
+            right: 0;
+            height: 4px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 24px 24px 0 0;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Search section */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
         }
 
         .input-group {
             display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: var(--transition);
+            z-index: 2;
         }
 
         input[type="text"] {
-            flex: 1;
-            padding: 1rem 1.5rem;
+            width: 100%;
+            padding: 1.25rem 1.25rem 1.25rem 3.5rem;
             font-size: 1.1rem;
             border: 2px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
             transition: var(--transition);
             font-weight: 500;
             color: var(--text);
-            background-color: rgba(249, 250, 251, 0.8);
+            background-color: var(--bg);
+            font-family: inherit;
         }
 
         input[type="text"]:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 5px rgba(124, 58, 237, 0.15);
+            background-color: var(--card-bg);
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            transform: translateY(-1px);
         }
 
-        button {
-            background-image: linear-gradient(to right, var(--primary), var(--primary-light));
+        input[type="text"]:focus + .input-icon {
+            color: var(--primary);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
             padding: 0 2.5rem;
             border: none;
             font-size: 1.1rem;
             font-weight: 700;
-            border-radius: 12px;
+            border-radius: 16px;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 6px 12px var(--shadow-light);
+            box-shadow: var(--shadow-md);
             letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.75rem;
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+            justify-content: center;
         }
 
-        button:hover {
-            background-image: linear-gradient(to right, var(--primary-dark), var(--primary));
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px var(--shadow-medium);
+        .search-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
-        button:disabled {
-            background: var(--text-light);
+        .search-btn:hover::before {
+            left: 100%;
+        }
+
+        .search-btn:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-btn:active {
+            transform: translateY(0);
+        }
+
+        .search-btn:disabled {
+            background: var(--text-muted);
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Status messages */
+        .status-container {
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .loading {
             display: none;
             text-align: center;
-            margin: 40px 0;
             color: var(--text);
             font-size: 1.1rem;
             font-weight: 500;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
         }
 
         .spinner {
-            border: 5px solid rgba(0, 0, 0, 0.1);
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
             border-radius: 50%;
-            border-top: 5px solid var(--primary);
-            width: 50px;
-            height: 50px;
-            animation: spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
-            margin: 0 auto 20px;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .loading-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            animation: bounce 1.4s ease-in-out infinite both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
 
         .error {
             color: var(--warning);
-            background: rgba(239, 68, 68, 0.1);
-            padding: 1.2rem;
-            border-radius: 12px;
-            margin: 25px 0;
-            text-align: center;
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.05), rgba(220, 38, 38, 0.1));
+            padding: 1.5rem;
+            border-radius: 16px;
             display: none;
             font-weight: 600;
-            border-left: 4px solid var(--warning);
-            opacity: 0;
-            animation: fadeIn 0.4s ease-out forwards;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
+            border: 1px solid rgba(220, 38, 38, 0.2);
+            animation: shake 0.5s ease-in-out;
+            backdrop-filter: blur(10px);
         }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .error-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .error-icon {
+            font-size: 1.5rem;
+            color: var(--warning);
+        }
+
+        /* Results section */
         .result {
-            margin-top: 40px;
+            margin-top: 3rem;
             display: none;
         }
 
-        .result-section {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.08);
-            border: 1px solid rgba(124, 58, 237, 0.1);
+        .results-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .results-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin: 0 0 0.5rem 0;
+            letter-spacing: -0.5px;
+        }
+
+        .results-subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .result-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
             opacity: 0;
+            transform: translateY(30px);
             animation: slideInUp 0.6s ease-out forwards;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
-        .result-section:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(124, 58, 237, 0.12);
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 20px 20px 0 0;
         }
 
-        .result-section:nth-child(1) { 
+        .result-card:nth-child(1) { 
             animation-delay: 0.1s;
-            border-top: 3px solid var(--primary);
         }
-        .result-section:nth-child(2) { 
+        .result-card:nth-child(1)::before { 
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+        }
+
+        .result-card:nth-child(2) { 
             animation-delay: 0.2s;
-            border-top: 3px solid var(--accent);
         }
-        .result-section:nth-child(3) { 
+        .result-card:nth-child(2)::before { 
+            background: linear-gradient(90deg, var(--accent), #10B981);
+        }
+
+        .result-card:nth-child(3) { 
             animation-delay: 0.3s;
-            border-top: 3px solid var(--secondary);
+        }
+        .result-card:nth-child(3)::before { 
+            background: linear-gradient(90deg, var(--secondary), #8B5CF6);
+        }
+
+        .result-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
         }
 
         @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .result-section h3 {
-            margin: 0 0 1.5rem 0;
-            font-size: 1.6rem;
-            font-weight: 800;
+        .card-header {
             display: flex;
             align-items: center;
-            gap: 15px;
-            letter-spacing: -0.2px;
+            gap: 1rem;
+            margin-bottom: 2rem;
         }
 
-        .result-section:nth-child(1) h3 { color: var(--primary); }
-        .result-section:nth-child(2) h3 { color: var(--accent); }
-        .result-section:nth-child(3) h3 { color: var(--secondary); }
-
-        .result-section h3 i {
-            font-size: 1.4rem;
-            width: 40px;
-            height: 40px;
-            background: rgba(124, 58, 237, 0.1);
-            border-radius: 50%;
-            display: inline-flex;
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card:nth-child(1) .card-icon { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        }
+        .result-card:nth-child(2) .card-icon { 
+            background: linear-gradient(135deg, var(--accent), #10B981);
+        }
+        .result-card:nth-child(3) .card-icon { 
+            background: linear-gradient(135deg, var(--secondary), #8B5CF6);
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.3px;
         }
 
         .point-list {
-            padding-left: 0;
+            padding: 0;
             list-style: none;
+            margin: 0;
         }
 
         .point-list li {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
             position: relative;
             line-height: 1.7;
-            padding-left: 2.5rem;
-            font-size: 1.05rem;
+            padding-left: 2rem;
+            font-size: 1rem;
+            color: var(--text);
+            transition: var(--transition-fast);
+        }
+
+        .point-list li:hover {
+            transform: translateX(4px);
         }
 
         .point-list li::before {
             content: "";
             position: absolute;
             left: 0;
-            top: 0.5rem;
-            width: 8px;
-            height: 8px;
+            top: 0.7rem;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
+            transition: var(--transition-fast);
         }
 
-        .result-section:nth-child(1) .point-list li::before { background-color: var(--primary); }
-        .result-section:nth-child(2) .point-list li::before { background-color: var(--accent); }
-        .result-section:nth-child(3) .point-list li::before { background-color: var(--secondary); }
+        .result-card:nth-child(1) .point-list li::before { 
+            background: var(--primary);
+        }
+        .result-card:nth-child(2) .point-list li::before { 
+            background: var(--accent);
+        }
+        .result-card:nth-child(3) .point-list li::before { 
+            background: var(--secondary);
+        }
+
+        .point-list li:hover::before {
+            transform: scale(1.5);
+        }
 
         .point-list li strong {
             font-weight: 700;
-            background: rgba(124, 58, 237, 0.1);
-            padding: 0.1rem 0.3rem;
-            border-radius: 4px;
+            color: var(--text);
+            background: rgba(37, 99, 235, 0.08);
+            padding: 0.1rem 0.4rem;
+            border-radius: 6px;
+            font-size: 0.95rem;
         }
 
         .point-list li em {
@@ -291,126 +571,252 @@
 
         .tag {
             display: inline-block;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
             margin-right: 0.5rem;
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition-fast);
+        }
+
+        .tag:hover {
+            transform: translateY(-1px);
         }
 
         .tag.warning {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(220, 38, 38, 0.1);
             color: var(--warning);
+            border: 1px solid rgba(220, 38, 38, 0.2);
         }
 
         .tag.success {
-            background: rgba(16, 185, 129, 0.1);
+            background: rgba(5, 150, 105, 0.1);
             color: var(--accent);
+            border: 1px solid rgba(5, 150, 105, 0.2);
         }
 
-        footer {
+        /* Footer */
+        .footer {
             margin-top: auto;
-            padding: 2.5rem;
+            padding: 3rem 2rem;
+            text-align: center;
             color: var(--text-light);
             font-size: 0.95rem;
-            text-align: center;
+            border-top: 1px solid var(--border-light);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
             width: 100%;
-            border-top: 1px solid var(--border);
-            font-weight: 500;
         }
 
-        footer p:first-child {
-            margin-bottom: 0.5rem;
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
         }
 
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        .footer-highlight {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
-            .container {
-                padding: 1.8rem;
-                border-radius: 16px;
+            .main-container {
+                padding: 1rem;
             }
-            
+
             h1 {
-                font-size: 2.2rem;
-                margin: 30px 0 15px;
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 2rem;
+                border-radius: 20px;
             }
             
             .input-group {
                 flex-direction: column;
-                gap: 15px;
+                gap: 1rem;
             }
             
-            button {
-                padding: 1rem;
+            .search-btn {
+                padding: 1.25rem;
                 width: 100%;
-                justify-content: center;
             }
 
-            .result-section {
-                padding: 1.5rem;
+            .results-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
-            .result-section h3 {
-                font-size: 1.4rem;
+            .result-card {
+                padding: 2rem;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
             }
 
             .point-list li {
-                padding-left: 2rem;
-                font-size: 1rem;
+                padding-left: 1.5rem;
+                font-size: 0.95rem;
             }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            .result-card {
+                padding: 1.5rem;
+            }
+
+            .card-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.3rem;
+            }
+        }
+
+        /* Accessibility improvements */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles for better accessibility */
+        .search-btn:focus-visible,
+        input[type="text"]:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
-    <main>
-        <h1>Disease Information Finder</h1>
-        <div class="container">
-            <div class="input-group">
-                <input 
-                    type="text" 
-                    id="diseaseInput" 
-                    placeholder="Enter disease name (e.g., diabetes, hypertension)..." 
-                    aria-label="Disease name"
-                />
-                <button id="searchBtn">
-                    <i class="fas fa-search"></i>
-                    Get Info
-                </button>
+    <div class="main-container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-stethoscope"></i>
+                </div>
+                <span class="logo-text">MediSearch</span>
+            </div>
+            <h1>AI-Powered Medical Information</h1>
+            <p class="subtitle">Get comprehensive disease information, treatment options, and prevention strategies powered by advanced AI</p>
+        </header>
+
+        <main class="container">
+            <div class="search-section">
+                <label for="diseaseInput" class="search-label">
+                    <i class="fas fa-search"></i> Search for Disease Information
+                </label>
+                <div class="input-group">
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="diseaseInput" 
+                            placeholder="Enter disease name (e.g., diabetes, hypertension, asthma)..." 
+                            aria-label="Disease name"
+                            autocomplete="off"
+                        />
+                        <i class="fas fa-search input-icon"></i>
+                    </div>
+                    <button id="searchBtn" class="search-btn" aria-label="Search for disease information">
+                        <i class="fas fa-search"></i>
+                        <span>Analyze</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="error" id="errorBox">
-                <i class="fas fa-exclamation-circle"></i>
-                <span id="errorMessage"></span>
-            </div>
+            <div class="status-container">
+                <div class="error" id="errorBox">
+                    <div class="error-content">
+                        <i class="fas fa-exclamation-triangle error-icon"></i>
+                        <span id="errorMessage"></span>
+                    </div>
+                </div>
 
-            <div class="loading" id="loadingIndicator">
-                <div class="spinner"></div>
-                <p>Analyzing medical data with AI...</p>
+                <div class="loading" id="loadingIndicator">
+                    <div class="loading-content">
+                        <div class="spinner"></div>
+                        <div class="loading-text">
+                            <span>Analyzing medical data with AI</span>
+                            <div class="loading-dots">
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                                <div class="loading-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="result" id="resultBox">
-                <section class="result-section">
-                    <h3><i class="fas fa-pills"></i>Medication Plan</h3>
-                    <ul class="point-list" id="medication"></ul>
-                </section>
+                <div class="results-header">
+                    <h2 class="results-title">Medical Analysis Results</h2>
+                    <p class="results-subtitle">Comprehensive information based on current medical knowledge</p>
+                </div>
 
-                <section class="result-section">
-                    <h3><i class="fas fa-utensils"></i>Nutritional Guidance</h3>
-                    <ul class="point-list" id="food"></ul>
-                </section>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-pills"></i>
+                            </div>
+                            <h3 class="card-title">Treatment & Medication</h3>
+                        </div>
+                        <ul class="point-list" id="medication"></ul>
+                    </div>
 
-                <section class="result-section">
-                    <h3><i class="fas fa-shield-alt"></i>Prevention Strategy</h3>
-                    <ul class="point-list" id="precautions"></ul>
-                </section>
+                    <div class="result-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-utensils"></i>
+                            </div>
+                            <h3 class="card-title">Nutritional Guidance</h3>
+                        </div>
+                        <ul class="point-list" id="food"></ul>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="card-header">
+                            <div class="card-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <h3 class="card-title">Prevention & Care</h3>
+                        </div>
+                        <ul class="point-list" id="precautions"></ul>
+                    </div>
+                </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <footer>
-        <p>Powered by AI | For educational purposes only</p>
-        <p><strong>Consult a healthcare professional for medical advice</strong></p>
-    </footer>
+        <footer class="footer">
+            <div class="footer-content">
+                <p><i class="fas fa-robot"></i> Powered by Advanced AI Technology</p>
+                <p class="footer-highlight">⚠️ For educational purposes only - Always consult healthcare professionals for medical advice</p>
+                <p><i class="fas fa-heart"></i> Built with care for better health awareness</p>
+            </div>
+        </footer>
+    </div>
 
     <script>
         const diseaseInput = document.getElementById("diseaseInput");
@@ -420,16 +826,23 @@
         const loadingIndicator = document.getElementById("loadingIndicator");
         const resultBox = document.getElementById("resultBox");
 
-        // Initialize with error hidden
+        // Initialize
         errorBox.style.display = "none";
 
-        // Handle search button click
+        // Event listeners
         searchBtn.addEventListener("click", getDiseaseInfo);
-
-        // Handle Enter key press
         diseaseInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
                 getDiseaseInfo();
+            }
+        });
+
+        // Add input animation
+        diseaseInput.addEventListener("input", () => {
+            if (diseaseInput.value.length > 0) {
+                diseaseInput.style.transform = "translateY(-1px)";
+            } else {
+                diseaseInput.style.transform = "translateY(0)";
             }
         });
 
@@ -438,28 +851,28 @@
             
             // Validate input
             if (!disease) {
-                showError("Please enter a disease name");
+                showError("Please enter a disease name to search");
                 return;
             }
-            if (disease.length < 3) {
-                showError("Enter at least 3 characters");
+            if (disease.length < 2) {
+                showError("Please enter at least 2 characters");
                 return;
             }
 
-            // Clear previous results and errors
+            // Clear previous states
             hideError();
             resultBox.style.display = "none";
             
             // Show loading state
-            loadingIndicator.style.display = "block";
-            searchBtn.disabled = true;
-            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            showLoading();
+            disableSearch();
 
             try {
-                // Reset all result sections for animation
-                document.querySelectorAll('.result-section').forEach(section => {
-                    section.style.opacity = '0';
-                    section.style.transform = 'translateY(30px)';
+                // Reset result cards for animation
+                document.querySelectorAll('.result-card').forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    card.style.animationDelay = `${0.1 * (index + 1)}s`;
                 });
 
                 // API call
@@ -473,22 +886,24 @@
 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.error || "Failed to retrieve information");
+                    throw new Error(errorData.error || "Failed to retrieve medical information");
                 }
 
                 const data = await response.json();
-
-                // Process and display results
                 displayResults(data);
                 
-                resultBox.style.display = "block";
+                // Show results with animation
+                setTimeout(() => {
+                    resultBox.style.display = "block";
+                    resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 300);
+
             } catch (error) {
                 console.error("Error:", error);
-                showError(error.message || "Something went wrong. Please try again.");
+                showError(error.message || "Unable to fetch information. Please try again.");
             } finally {
-                loadingIndicator.style.display = "none";
-                searchBtn.disabled = false;
-                searchBtn.innerHTML = '<i class="fas fa-search"></i> Get Info';
+                hideLoading();
+                enableSearch();
             }
         }
 
@@ -511,23 +926,19 @@
                 return '<li><em>No information available</em></li>';
             }
             
-            // Split by lines and remove empty lines
             const lines = text.split('\n').filter(line => line.trim());
             
             return lines.map(line => {
-                // Clean the line from markdown symbols and extra spaces
                 let cleanLine = line.replace(/^[•\-\*]\s*/, '').trim();
                 
-                // Format important phrases with strong tags
+                // Format styling
                 cleanLine = cleanLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                
-                // Format italic phrases
                 cleanLine = cleanLine.replace(/\*(.*?)\*/g, '<em>$1</em>');
                 
-                // Add tags for important categories
-                cleanLine = cleanLine.replace(/\[(warning|important)\]/g, '<span class="tag warning">$1</span>');
-                cleanLine = cleanLine.replace(/\[(recommended|beneficial)\]/g, '<span class="tag success">$1</span>');
-                cleanLine = cleanLine.replace(/\[(.*?)\]/g, '<span class="tag">$1</span>');
+                // Add tags
+                cleanLine = cleanLine.replace(/\[(warning|important|critical)\]/gi, '<span class="tag warning">$1</span>');
+                cleanLine = cleanLine.replace(/\[(recommended|beneficial|good)\]/gi, '<span class="tag success">$1</span>');
+                cleanLine = cleanLine.replace(/\[([^\]]+)\]/g, '<span class="tag">$1</span>');
                 
                 return `<li>${cleanLine}</li>`;
             }).join('');
@@ -537,16 +948,42 @@
             errorMessage.textContent = message;
             errorBox.style.display = "flex";
             errorBox.style.opacity = '0';
-            errorBox.style.transform = 'translateY(20px)';
             setTimeout(() => {
                 errorBox.style.opacity = '1';
-                errorBox.style.transform = 'translateY(0)';
             }, 10);
         }
 
         function hideError() {
             errorBox.style.display = "none";
         }
+
+        function showLoading() {
+            loadingIndicator.style.display = "block";
+        }
+
+        function hideLoading() {
+            loadingIndicator.style.display = "none";
+        }
+
+        function disableSearch() {
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Processing...</span>';
+        }
+
+        function enableSearch() {
+            searchBtn.disabled = false;
+            searchBtn.innerHTML = '<i class="fas fa-search"></i><span>Analyze</span>';
+        }
+
+        // Add smooth scroll behavior for better UX
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Add keyboard navigation enhancement
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideError();
+            }
+        });
     </script>
 </body>
 </html>
